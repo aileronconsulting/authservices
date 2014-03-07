@@ -14,6 +14,13 @@ Three new config sections are required. Add these under `configuration/configSec
   <section name="kentor.authServices" type="Kentor.AuthServices.Configuration.KentorAuthServicesSection, Kentor.AuthServices"/>
 </configSections>
 ```
+###Encrypted Assertions
+If you want to handle encrypted assertions you need to add the relative path of the cert and the password as keys in the `web.config`:
+```
+    <add key="certificateLocation" value="pfx file relative location"/>
+    <add key="certificateLocation" value="pfx password"/>
+```
+
 ###Loading modules
 Http modules need to be loaded. The `SessionAuthenticationModule` is always required.
 The `Saml2AuthenticationModule` is required if you use the bare Kentor.AuthServices

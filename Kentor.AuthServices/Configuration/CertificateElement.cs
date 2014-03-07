@@ -25,6 +25,7 @@ namespace Kentor.AuthServices.Configuration
             }
         }
 
+
         /// <summary>
         /// Store name to search.
         /// </summary>
@@ -91,31 +92,27 @@ namespace Kentor.AuthServices.Configuration
                 {
                     fileName = HttpContext.Current.Server.MapPath(fileName);
                 }
-
                 return new X509Certificate2(fileName);
             }
-            else
+            var store = new X509Store(StoreName, StoreLocation);
+            store.Open(OpenFlags.ReadOnly);
+            try
             {
-                var store = new X509Store(StoreName, StoreLocation);              
-                store.Open(OpenFlags.ReadOnly);
-                try
-                {
-                    var certs = store.Certificates.Find(X509FindType, FindValue, false);
+                var certs = store.Certificates.Find(X509FindType, FindValue, false);
 
-                    if (certs.Count != 1)
-                    {
-                        throw new InvalidOperationException(
-                            string.Format(CultureInfo.InvariantCulture, 
-                            "Finding cert through {0} in {1}:{2} with value {3} matched {4} certificates. A unique match is required.",
-                            X509FindType, StoreLocation, StoreName, FindValue, certs.Count));
-                    }
-
-                    return certs[0];
-                }
-                finally
+                if (certs.Count != 1)
                 {
-                    store.Close();
+                    throw new InvalidOperationException(
+                        string.Format(CultureInfo.InvariantCulture,
+                                      "Finding cert through {0} in {1}:{2} with value {3} matched {4} certificates. A unique match is required.",
+                                      X509FindType, StoreLocation, StoreName, FindValue, certs.Count));
                 }
+
+                return certs[0];
+            }
+            finally
+            {
+                store.Close();
             }
         }
     }
